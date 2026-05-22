@@ -3,6 +3,7 @@ import { InputText } from "../../../ui/InputText";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Button from "../../../components/Button";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   nama: string;
@@ -13,10 +14,12 @@ type FormData = {
 const schema = z.object({
   nama: z.string().min(1, "Nama pembicara harus diisi"),
   role: z.string().min(1, "Role pembicara harus diisi"),
-  image: z.string().min(1, "image pembicara harus diisi"),
+  image: z.string().min(1, "Image pembicara harus diisi"),
 });
 
 export default function PembicaraCreate() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -28,7 +31,7 @@ export default function PembicaraCreate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch("fetch(`${import.meta.env.VITE_API_URL}/category`, {", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pembicara`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,19 +43,15 @@ export default function PembicaraCreate() {
         }),
       });
 
-      const result = await response.json();
-
-      console.log(result);
-
       if (!response.ok) {
-        alert(result.message || "Gagal menyimpan pembicara");
-        return;
+        throw new Error("Gagal menyimpan pembicara");
       }
 
       alert("Pembicara berhasil disimpan");
       reset();
+      navigate("/dashboard/pembicara");
     } catch (error) {
-      console.error("Gagal fetch pembicara:", error);
+      console.error(error);
       alert("Terjadi kesalahan");
     }
   };
@@ -65,30 +64,28 @@ export default function PembicaraCreate() {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-          <div>
-            <InputText
-              label="Nama"
-              nama="nama"
-              register={register}
-              error={errors.nama?.message}
-            />
-            <InputText
-              label="Role"
-              nama="role"
-              register={register}
-              error={errors.role?.message}
-            />
-            <InputText
-              label="image"
-              nama="image"
-              register={register}
-              error={errors.image?.message}
-            />
-          </div>
+          <InputText
+            label="Nama"
+            nama="nama"
+            register={register}
+            error={errors.nama?.message}
+          />
 
-          <div className="flex justify-start mt-4">
-            <Button type="submit" label="Simpan" />
-          </div>
+          <InputText
+            label="Role"
+            nama="role"
+            register={register}
+            error={errors.role?.message}
+          />
+
+          <InputText
+            label="Image URL"
+            nama="image"
+            register={register}
+            error={errors.image?.message}
+          />
+
+          <Button type="submit" label="Simpan" />
         </form>
       </div>
     </div>

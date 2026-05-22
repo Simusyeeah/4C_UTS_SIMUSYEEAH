@@ -1,9 +1,9 @@
 import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { InputText } from "../../../ui/InputText";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../../components/Button";
 
 type FormData = {
@@ -11,7 +11,7 @@ type FormData = {
 };
 
 const schema = z.object({
-  name: z.string().min(1, "Nama Category harus diisi"),
+  name: z.string().min(1, "Nama category harus diisi"),
 });
 
 export default function CategoryUpdate() {
@@ -27,61 +27,63 @@ export default function CategoryUpdate() {
     resolver: zodResolver(schema),
   });
 
-  const getDetailCategory = async () => {
+  const getCategoryById = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/category/${id}`);
-      const data = await response.json();
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/category/${id}`
+      );
+      const result = await response.json();
 
-      setValue("name", data.name);
+      setValue("name", result.data.name);
     } catch (error) {
       console.error(error);
+      alert("Gagal mengambil data category");
     }
   };
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/category/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/category/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Gagal mengupdate category");
+        throw new Error("Gagal update category");
       }
 
       alert("Category berhasil diupdate");
       navigate("/dashboard/category");
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan saat mengupdate category");
+      alert("Category gagal diupdate");
     }
   };
 
   useEffect(() => {
-    getDetailCategory();
+    getCategoryById();
   }, []);
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <div className="bg-white rounded-xl shadow-md p-8 border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">
-          Edit Category Event
-        </h2>
+      <div className="bg-white rounded-xl shadow-md p-8">
+        <h2 className="text-2xl font-bold mb-6">Edit Category</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <InputText
-            label="Category Event"
+            label="Category Name"
             nama="name"
             register={register}
             error={errors.name?.message}
           />
 
-          <div className="flex justify-start mt-4">
-            <Button type="submit" label="Update Category" />
-          </div>
+          <Button type="submit" label="Update Category" />
         </form>
       </div>
     </div>

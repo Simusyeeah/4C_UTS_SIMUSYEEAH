@@ -11,11 +11,8 @@ export default function CategoryIndex() {
 
   const getCategories = async () => {
     try {
-      const response = await fetch("${IMPORT.META.ENV.VITE_API_URL}/category");
-
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/category`);
       const result = await response.json();
-
-      console.log("HASIL CATEGORY:", result);
 
       setCategories(Array.isArray(result.data) ? result.data : []);
     } catch (error) {
@@ -29,9 +26,12 @@ export default function CategoryIndex() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/category/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/category/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Gagal menghapus category");

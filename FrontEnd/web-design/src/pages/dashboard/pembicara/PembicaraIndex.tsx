@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 type Pembicara = {
   id: number;
@@ -9,70 +9,88 @@ type Pembicara = {
 };
 
 export default function PembicaraIndex() {
-  const [pembicaraList, setPembicaraList] = useState<Pembicara[]>([]);
+  const [pembicara, setPembicara] = useState<Pembicara[]>([]);
 
-  const fetchPembicara = async () => {
-    const response = await fetch("${IMPORT.META.ENV.VITE_API_URL}/pembicara");
-    const result = await response.json();
+  const getPembicara = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pembicara`);
+      const result = await response.json();
 
-    setPembicaraList(Array.isArray(result.data) ? result.data : []);
+      setPembicara(Array.isArray(result.data) ? result.data : []);
+    } catch (error) {
+      console.error(error);
+      setPembicara([]);
+    }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Yakin ingin menghapus pembicara ini?")) return;
+    const confirmDelete = confirm("Yakin ingin menghapus pembicara ini?");
+    if (!confirmDelete) return;
 
-    await fetch(`${IMPORT.META.ENV.VITE_API_URL}/pembicara/${id}`, {
-      method: "DELETE",
-    });
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/pembicara/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-    alert("Pembicara berhasil dihapus");
-    fetchPembicara();
+      if (!response.ok) {
+        throw new Error("Gagal menghapus pembicara");
+      }
+
+      alert("Pembicara berhasil dihapus");
+      getPembicara();
+    } catch (error) {
+      console.error(error);
+      alert("Pembicara gagal dihapus");
+    }
   };
 
   useEffect(() => {
-    fetchPembicara();
+    getPembicara();
   }, []);
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-2">Pembicara</h1>
-
-      <p className="text-gray-500 mb-6">Daftar Pembicara Biromus</p>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold">Pembicara</h1>
+        <p className="text-gray-500 mt-2">Daftar Pembicara Biromus</p>
+      </div>
 
       <Link
         to="/dashboard/pembicara/create"
-        className="inline-block mb-6 bg-fuchsia-600 text-white rounded-xl px-5 py-2"
+        className="inline-block px-6 py-3 mb-8 bg-[#8b1e3f] text-white rounded-xl font-semibold"
       >
         + Create New
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {pembicaraList.map((item) => (
+      <div className="grid md:grid-cols-3 gap-8">
+        {pembicara.map((item) => (
           <div
             key={item.id}
-            className="border rounded-2xl shadow-md p-4"
+            className="bg-white border rounded-2xl shadow-md p-5"
           >
             <img
               src={item.image}
               alt={item.name}
-              className="w-full h-52 object-cover rounded-xl mb-4"
+              className="w-full h-56 object-cover rounded-xl"
             />
 
-            <h2 className="text-xl font-semibold">{item.name}</h2>
-
+            <h2 className="text-2xl font-bold mt-5">{item.name}</h2>
             <p className="text-gray-500">{item.role}</p>
 
             <div className="flex justify-end gap-3 mt-6">
               <Link
                 to={`/dashboard/pembicara/update/${item.id}`}
-                className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+                className="px-5 py-2 bg-blue-600 text-white rounded-xl"
               >
                 Edit
               </Link>
 
               <button
                 onClick={() => handleDelete(item.id)}
-                className="px-5 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700"
+                className="px-5 py-2 bg-red-600 text-white rounded-xl"
               >
                 Delete
               </button>

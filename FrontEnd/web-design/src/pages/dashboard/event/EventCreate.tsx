@@ -15,7 +15,6 @@ type Pembicara = {
   id: number;
   name: string;
   role: string;
-  image: string;
 };
 
 type FormData = {
@@ -32,12 +31,11 @@ const schema = z.object({
   description: z.string().min(1, "Deskripsi harus diisi"),
   location: z.string().min(1, "Lokasi harus diisi"),
   dateEvent: z.string().min(1, "Tanggal event harus diisi"),
-  categoryId: z.string().min(1, "Kategori event harus dipilih"),
+  categoryId: z.string().min(1, "Kategori harus dipilih"),
   pembicaraId: z.string().min(1, "Pembicara harus dipilih"),
 });
 
 export default function EventCreate() {
-
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -52,126 +50,61 @@ export default function EventCreate() {
     resolver: zodResolver(schema),
   });
 
-  // GET CATEGORY
   const getCategories = async () => {
-
-    try {
-
-      const response = await fetch(
-        "${IMPORT.META.ENV.VITE_API_URL}/category"
-      );
-
-      const result = await response.json();
-
-      setCategories(
-        Array.isArray(result.data)
-          ? result.data
-          : []
-      );
-
-    } catch (error) {
-
-      console.log(error);
-
-      setCategories([]);
-    }
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/category`);
+    const result = await response.json();
+    setCategories(Array.isArray(result.data) ? result.data : []);
   };
 
-  // GET PEMBICARA
   const getPembicara = async () => {
-
-    try {
-
-      const response = await fetch(
-        "${IMPORT.META.ENV.VITE_API_URL}/pembicara"
-      );
-
-      const result = await response.json();
-
-      setPembicara(
-        Array.isArray(result.data)
-          ? result.data
-          : []
-      );
-
-    } catch (error) {
-
-      console.log(error);
-
-      setPembicara([]);
-    }
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/pembicara`);
+    const result = await response.json();
+    setPembicara(Array.isArray(result.data) ? result.data : []);
   };
 
-  // SUBMIT
   const onSubmit = async (data: FormData) => {
-
     try {
-
-      const response = await fetch(
-        "${IMPORT.META.ENV.VITE_API_URL}/event",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            title: data.title,
-            description: data.description,
-            location: data.location,
-            dateEvent: data.dateEvent,
-            categoryId: Number(data.categoryId),
-            pembicaraId: Number(data.pembicaraId),
-          }),
-        }
-      );
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/event`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          location: data.location,
+          dateEvent: data.dateEvent,
+          categoryId: Number(data.categoryId),
+          pembicaraId: Number(data.pembicaraId),
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(
-          "Gagal menambahkan event"
-        );
+        throw new Error("Gagal menambahkan event");
       }
 
       alert("Event berhasil ditambahkan");
-
       reset();
-
       navigate("/dashboard/event");
-
     } catch (error) {
-
-      console.log(error);
-
-      alert(
-        "Terjadi kesalahan saat menambahkan event"
-      );
+      console.error(error);
+      alert("Terjadi kesalahan saat menambahkan event");
     }
   };
 
   useEffect(() => {
-
     getCategories();
-
     getPembicara();
-
   }, []);
 
   return (
-
     <div className="p-6 max-w-2xl mx-auto">
-
-      <div className="bg-[#f8f5f0] rounded-2xl shadow-md p-8 border border-[#e0d6c8]">
-
-        <h2 className="text-2xl font-bold text-[#3e2f1c] mb-6 border-b border-[#d6c7b2] pb-4">
+      <div className="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">
           Add New Event
         </h2>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6"
-        >
-
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <InputText
             label="Event Title"
             nama="title"
@@ -201,89 +134,27 @@ export default function EventCreate() {
             error={errors.dateEvent?.message}
           />
 
-          {/* CATEGORY */}
-          <div>
-
-            <label className="block mb-2 font-medium text-[#3e2f1c]">
-              Category Event
-            </label>
-
-            <select
-              {...register("categoryId")}
-              className="w-full px-4 py-3 rounded-xl border border-[#d6c7b2] bg-white"
-            >
-
-              <option value="">
-                Pilih Category Event
+          <select {...register("categoryId")} className="border p-3 rounded-xl">
+            <option value="">Pilih Category</option>
+            {categories.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
               </option>
+            ))}
+          </select>
 
-              {categories.map((item) => (
-
-                <option
-                  key={item.id}
-                  value={item.id}
-                >
-                  {item.name}
-                </option>
-
-              ))}
-
-            </select>
-
-            <p className="text-sm text-red-500 mt-1">
-              {errors.categoryId?.message}
-            </p>
-
-          </div>
-
-          {/* PEMBICARA */}
-          <div>
-
-            <label className="block mb-2 font-medium text-[#3e2f1c]">
-              Pembicara
-            </label>
-
-            <select
-              {...register("pembicaraId")}
-              className="w-full px-4 py-3 rounded-xl border border-[#d6c7b2] bg-white"
-            >
-
-              <option value="">
-                Pilih Pembicara
+          <select {...register("pembicaraId")} className="border p-3 rounded-xl">
+            <option value="">Pilih Pembicara</option>
+            {pembicara.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name} - {item.role}
               </option>
+            ))}
+          </select>
 
-              {pembicara.map((item) => (
-
-                <option
-                  key={item.id}
-                  value={item.id}
-                >
-                  {item.name} - {item.role}
-                </option>
-
-              ))}
-
-            </select>
-
-            <p className="text-sm text-red-500 mt-1">
-              {errors.pembicaraId?.message}
-            </p>
-
-          </div>
-
-          <div className="flex justify-start mt-4">
-
-            <Button
-              type="submit"
-              label="Save Event"
-            />
-
-          </div>
-
+          <Button type="submit" label="Simpan Event" />
         </form>
-
       </div>
-
     </div>
   );
 }
