@@ -33,7 +33,7 @@ export default function PembicaraUpdate() {
 
   const getDetailPembicara = async () => {
     try {
-      const response = await fetch(`VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/pembicara/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pembicara/${id}`);
       const data = await response.json();
 
       setValue("name", data.name);
@@ -46,7 +46,7 @@ export default function PembicaraUpdate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch(`VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/pembicara/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/pembicara/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -58,7 +58,7 @@ export default function EventCreate() {
     try {
 
       const response = await fetch(
-        "VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/category"
+        "${IMPORT.META.ENV.VITE_API_URL}/category"
       );
 
       const result = await response.json();
@@ -83,7 +83,7 @@ export default function EventCreate() {
     try {
 
       const response = await fetch(
-        "VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/pembicara"
+        "${IMPORT.META.ENV.VITE_API_URL}/pembicara"
       );
 
       const result = await response.json();
@@ -108,7 +108,7 @@ export default function EventCreate() {
     try {
 
       const response = await fetch(
-        "VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/event",
+        "${IMPORT.META.ENV.VITE_API_URL}/event",
         {
           method: "POST",
 

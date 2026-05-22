@@ -28,7 +28,7 @@ export default function CategoryUpdate() {
   });
 
   const getCategoryById = async () => {
-    const response = await fetch(`VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/category/${id}`);
+    const response = await fetch(`${IMPORT.META.ENV.VITE_API_URL}/category/${id}`);
     const result = await response.json();
 
     setValue("name", result.data.name);
@@ -36,7 +36,7 @@ export default function CategoryUpdate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch(`VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/category/${id}`, {
+      const response = await fetch(`${IMPORT.META.ENV.VITE_API_URL}/category/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

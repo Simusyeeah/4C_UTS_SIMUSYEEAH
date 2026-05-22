@@ -12,7 +12,7 @@ export default function PembicaraIndex() {
   const [pembicaraList, setPembicaraList] = useState<Pembicara[]>([]);
 
   const fetchPembicara = async () => {
-    const response = await fetch("VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/pembicara");
+    const response = await fetch("${IMPORT.META.ENV.VITE_API_URL}/pembicara");
     const result = await response.json();
 
     setPembicaraList(Array.isArray(result.data) ? result.data : []);
@@ -21,7 +21,7 @@ export default function PembicaraIndex() {
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin ingin menghapus pembicara ini?")) return;
 
-    await fetch(`VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/pembicara/${id}`, {
+    await fetch(`${IMPORT.META.ENV.VITE_API_URL}/pembicara/${id}`, {
       method: "DELETE",
     });
 

@@ -14,7 +14,7 @@ export default function EventIndex() {
 
     const getEvents = async () => {
         try {
-            const response = await fetch("VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/event");
+            const response = await fetch("${IMPORT.META.ENV.VITE_API_URL}/event");
             const result = await response.json();
 
             console.log("HASIL EVENT:", result);
@@ -31,7 +31,7 @@ export default function EventIndex() {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/event/${id}`, {
+            const response = await fetch(`${IMPORT.META.ENV.VITE_API_URL}/event/${id}`, {
                 method: "DELETE",
             });
 

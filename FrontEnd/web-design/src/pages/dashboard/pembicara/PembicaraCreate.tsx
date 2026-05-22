@@ -28,7 +28,7 @@ export default function PembicaraCreate() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch("VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/pembicara", {
+      const response = await fetch("fetch(`${import.meta.env.VITE_API_URL}/category`, {", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

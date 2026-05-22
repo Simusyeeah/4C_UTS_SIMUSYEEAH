@@ -25,28 +25,28 @@ export default function CategoryCreate() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      const response = await fetch("VITE_API_URL=https://4-c-uts-simusyeeah.vercel.app/category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+const onSubmit = async (data: FormData) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/category`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-      if (!response.ok) {
-        throw new Error("Gagal menambahkan category");
-      }
-
-      alert("Category berhasil ditambahkan");
-      reset();
-      navigate("/dashboard/category");
-    } catch (error) {
-      console.error(error);
-      alert("Terjadi kesalahan saat menambahkan category");
+    if (!response.ok) {
+      throw new Error("Gagal menambahkan category");
     }
-  };
+
+    alert("Category berhasil ditambahkan");
+    reset();
+    navigate("/dashboard/category");
+  } catch (error) {
+    console.error(error);
+    alert("Terjadi kesalahan saat menambahkan category");
+  }
+};
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
